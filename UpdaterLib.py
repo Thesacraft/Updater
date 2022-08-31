@@ -66,8 +66,9 @@ class Updater():
             self.startGame()
     def extract(self):
         print("extracting...")
-        with zipfile.ZipFile("Game.zip","r")as zip_ref:
+        with zipfile.ZipFile("game.zip","r")as zip_ref:
             zip_ref.extractall("Application_new")
+        os.remove("game.zip")
         self.updateGame()
     def updateGame(self):
         if os.path.exists("Application"):
@@ -88,7 +89,7 @@ class Updater():
         os.makedirs("Application_new")
         response = requests.get(self.gamelink)
 
-        with open("Game.zip","wb") as handle:
+        with open("game.zip","wb") as handle:
             for data in response.iter_content(chunk_size=1024):
                 if data:
                     handle.write(data)
