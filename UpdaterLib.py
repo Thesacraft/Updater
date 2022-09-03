@@ -11,7 +11,7 @@ import urllib.request
 import requests
 import time
 
-class TestUpdater():
+class Updater():
     def __init__(self):
         self.createvars()
     def createvars(self):
