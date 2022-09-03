@@ -1,6 +1,7 @@
 import json
 import os.path
 import subprocess
+import sys
 import tkinter.messagebox
 from tkinter import *
 from tkinter.ttk import *
@@ -43,17 +44,16 @@ class Updater():
         if not os.path.exists("config.json"):
             with open("config.json","w+") as jsonFile:
                 jsonFile.write(json.dumps(self.standardConfig))
-        with open("config.json","r") as fh:
-            if json.load(fh) == self.standardConfig:
-                root = Tk()
-                root.withdraw()
-                tkinter.messagebox.showerror(title="Updater", message="You must configure the config first!")
-                exit()
         if not os.path.exists("version.txt"):
             with open("version.txt","w+") as fh:
                 fh.write("0.0")
         with open("config.json","r") as jsonFile:
             jsonObject = json.load(jsonFile)
+            if jsonObject == self.standardConfig:
+                root = Tk()
+                root.withdraw()
+                tkinter.messagebox.showerror(title="Updater", message="You must configure the config first!")
+                exit()
             self.gamename = jsonObject["gamename"]
             self.gamelink = jsonObject["game"]
             self.require = jsonObject["requireupdate"]
