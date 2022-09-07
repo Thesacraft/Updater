@@ -9,7 +9,6 @@ import urllib.request
 import zipfile
 from tkinter import *
 from tkinter.ttk import *
-
 import requests
 
 
