@@ -1,3 +1,5 @@
+# importing
+
 import json
 import os.path
 import shutil
@@ -9,14 +11,17 @@ import urllib.request
 import zipfile
 from tkinter import *
 from tkinter.ttk import *
+
 import requests
 
 
+# defining the Class
+
 class Updater():
-    def __init__(self):
+    def __init__(self):  # innit function calling the functions for setup
         self.createvars()
 
-    def createvars(self):
+    def createvars(self):  # Creating the variables
         fullpath = os.path.realpath(__file__)
         cwd = os.getcwd()
         filename = os.path.split(fullpath)
@@ -34,10 +39,10 @@ class Updater():
                                "gamefilename": "example.exe", "gamefilepath": "example/example.exe",
                                "requireupdate": False, "gamename": "example"}
 
-    def run(self):
+    def run(self):  # Runs the whole thing
         self.readConfig()
 
-    def createGUI(self):
+    def createGUI(self):  # Creates the GUI
         self.root = Tk()
         self.root.title(f"{self.gamename} Updater")
         self.Label = Label(self.root, text="Checking for Updates")
@@ -47,14 +52,14 @@ class Updater():
         self.progress["value"] = 0
         self.root.mainloop()
 
-    def readConfig(self):
-        if not os.path.exists("config.json"):
+    def readConfig(self):  # Reads the config
+        if not os.path.exists("config.json"):  # Checks if the config exists
             with open("config.json", "w+") as jsonFile:
                 jsonFile.write(json.dumps(self.standardConfig))
-        if not os.path.exists("version.txt"):
+        if not os.path.exists("version.txt"):  # Checks if the version file exists
             with open("version.txt", "w+") as fh:
                 fh.write("0.0")
-        with open("config.json", "r") as jsonFile:
+        with open("config.json", "r") as jsonFile:  # exits if the config file is the standard config
             jsonObject = json.load(jsonFile)
             if jsonObject == self.standardConfig:
                 root = Tk()
@@ -74,12 +79,12 @@ class Updater():
         with open("version.txt", "r") as fh:
             self.version = fh.read()
         # self.checkforUpdate()
-        new_thread = threading.Thread(target=self.checkforUpdate)
+        new_thread = threading.Thread(target=self.checkforUpdate)  # activates threading
         new_thread.daemon = True
         new_thread.start()
-        self.createGUI()
+        self.createGUI()  # creates the gui on the main thread
 
-    def checkforUpdate(self):
+    def checkforUpdate(self):  # checks for updates
         online_version = requests.get(self.versionlink).text
         self.new_version = online_version
         if not self.version == online_version:
@@ -101,7 +106,7 @@ class Updater():
         else:
             self.startGame()
 
-    def extract(self):
+    def extract(self):  # extracts the zip file
         print("extracting...")
         self.Label["text"] = "extracting"
         with zipfile.ZipFile("game.zip", "r") as zip_ref:
@@ -110,7 +115,7 @@ class Updater():
         os.remove("game.zip")
         self.updateGame()
 
-    def updateGame(self):
+    def updateGame(self):  # updates the game folder
         self.Label["text"] = "Copying Files"
         if os.path.exists("Application"):
             shutil.rmtree("Application")
@@ -127,12 +132,12 @@ class Updater():
         self.progress["value"] = 100
         self.startGame()
 
-    def startGame(self):
+    def startGame(self):  # Starts the game
         subprocess.Popen(self.gamefilecwd + "\\" + self.gamefilename, cwd=self.gamefilecwd)
         time.sleep(0.3)
         self.root.destroy()
 
-    def fileSize(self):
+    def fileSize(self):  # Updates the gui progressbar
         i = os.path.getsize('game.zip')
         i_before = 0
         while i < self.file_size:
@@ -143,7 +148,7 @@ class Updater():
                 self.progress["value"] = step
             i = os.path.getsize('game.zip')
 
-    def update(self, version=True):
+    def update(self, version=True):  # handles the download
         print(self.new_version)
         self.Label["text"] = f"Downloading Update v{self.new_version}"
         if os.path.exists("Application_new"):
